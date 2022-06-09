@@ -8,13 +8,17 @@ import edu.school21.gui.ConsoleView;
 import edu.school21.gui.Swingy;
 import edu.school21.gui.ViewManager;
 import edu.school21.models.*;
+import edu.school21.services.HeroService;
 
-import javax.swing.*;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class GameController {
 
     private final InputValidation inputValidation;
+    private final HeroService heroService;
+    private final Random random = new Random();
     private ViewManager viewManager;
     private UserInput userInput;
     private String input = "";
@@ -25,6 +29,7 @@ public class GameController {
 
     public GameController() {
         inputValidation = new InputValidation();
+        heroService = new HeroService();
     }
 
     public void start(boolean mode) {
@@ -40,6 +45,7 @@ public class GameController {
         viewManager = new ViewManager(consoleView, swingy);
         viewManager.changeMode(mode);
         startGame();
+        exit();
     }
 
     private void startGame() {
@@ -48,15 +54,46 @@ public class GameController {
             viewManager.startScreen();
             input = userInput.getInput();
             System.out.println(input);
+
             if (input.equals("Create new hero")) {
                 viewManager.newHero();
                 newGame();
-                viewManager.gamePlay(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp());
+                heroService.save(player.getHero());
+                viewManager.gamePlay(player);
                 startTheGame();
                 return;
             } else if (input.equals("Select hero")) {
-//                continueGame();
-                System.out.println("placeholder");
+
+                List<Hero> heroes = heroService.findAll();
+
+                if (heroes.isEmpty()) {
+                    viewManager.newHero();
+                    viewManager.displayWarning("No heroes");
+                    newGame();
+                    heroService.save(player.getHero());
+                    viewManager.gamePlay(player);
+                    startTheGame();
+                    return;
+                }
+
+                viewManager.chooseHero(heroes);
+
+                Hero hero;
+
+                while (true) {
+                    input = userInput.getInput();
+                    hero = heroService.findByName(input);
+                    if (hero == null) {
+                        viewManager.displayWarning("Hero with this name doesn't exist");
+                    } else {
+                        break ;
+                    }
+                }
+
+                player = new Player(hero);
+                viewManager.gamePlay(player);
+                startTheGame();
+
                 return;
             } else if (input.equals("Quit")) {
                 exit();
@@ -69,7 +106,6 @@ public class GameController {
     private void startGUI() {
         String input;
 
-
         swingy.displayMain(StaticVariables.WELCOME_MESSAGE);
         swingy.displayOptions(StaticVariables.MAIN_MENU);
         input = userInput.getInput();
@@ -79,10 +115,16 @@ public class GameController {
         String classType;
         Hero hero;
 
-        input = userInput.getInput();
+        while (true) {
+            input = userInput.getInput();
+            if (heroService.findByName(input) != null) {
+                viewManager.displayWarning("Hero with this name already exists");
+            } else {
+                break ;
+            }
+        }
 
         viewManager.display(StaticVariables.HERO_TYPE);
-//        System.out.println(StaticVariables.HERO_TYPE);
 
         label:
         while (true) {
@@ -124,20 +166,37 @@ public class GameController {
 
         try {
             while (true) {
-                viewManager.choseMove();
+                viewManager.chooseMove();
                 input = userInput.getInput().toUpperCase(Locale.ROOT);
                 if (input.equals("NORTH") || input.equals("SOUTH") || input.equals("EAST") || input.equals("WEST")) {
                     viewManager.displayMove(input.toLowerCase(Locale.ROOT));
                     encounter = worldMap.movePlayer(input);
-                    if (!player.encounter(encounter)) {
-                        viewManager.displayEnd("YOU DIED! ! !");
-                        return ;
+
+                    if (encounter > 0) {
+                        viewManager.encounter(encounter == 1 ? "GOBLIN" : "LARGE OGRE");
+                        input = userInput.getInput().toUpperCase(Locale.ROOT);
+                        if (input.equals("FIGHT") || (input.equals("RUN") && random.nextInt(1000) > (200))) {
+
+                            if (input.equals("RUN")) {
+                                viewManager.display("You can't run!");
+                            }
+
+                            if (!player.encounter(encounter)) {
+                                viewManager.displayEnd("YOU DIED! ! !");
+                                return ;
+                            }
+
+                            heroService.update(player.getHero());
+                            viewManager.afterEncounter(player);
+
+                            if (player.isNextLevel()) {
+                                player.setNextLevel(false);
+                                viewManager.levelUp();
+                            }
+
+                        }
                     }
-                    viewManager.afterEncounter(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp());
-                    if (player.isNextLevel()) {
-                        player.setNextLevel(false);
-                        viewManager.levelUp();
-                    }
+
                     worldMap.printMap();
                 } else if (input.equals("QUIT")) {
                     System.out.println("QUIT.");
@@ -147,6 +206,7 @@ public class GameController {
                 }
             }
         } catch (IndexOutOfBoundsException exception) {
+            heroService.update(player.getHero());
             viewManager.displayEnd("YOU WIN! ! !");
         }
     }

@@ -1,6 +1,10 @@
 package edu.school21.gui;
 
+import edu.school21.World.Player;
 import edu.school21.app.StaticVariables;
+import edu.school21.models.Hero;
+
+import java.util.List;
 
 public class ViewManager {
 
@@ -54,11 +58,22 @@ public class ViewManager {
         }
     }
 
-    public void choseMove() {
+    public void chooseHero(List<Hero> heroes) {
         if (MODE) {
-            consoleView.choseMove();
+
         } else {
-            swingy.displayMain("CHOSE YOUR MOVE");
+            swingy.refresh();
+            swingy.displayMain("CHOOSE YOUR HERO");
+            swingy.displayHeroes(heroes);
+        }
+    }
+
+    public void chooseMove() {
+        if (MODE) {
+            consoleView.chooseMove();
+        } else {
+            swingy.refresh();
+            swingy.displayMain("CHOOSE YOUR MOVE");
             swingy.displayOptions("North\nSouth\nWest\nEast");
         }
     }
@@ -72,24 +87,49 @@ public class ViewManager {
         }
     }
 
-    public void gamePlay(String heroName, int level, int nextLevel, int exp) {
+    public void gamePlay(Player player) {
         if (MODE) {
-            consoleView.gamePlay(heroName);
+            consoleView.gamePlay(player.getHeroName());
         } else {
-            swingy.setHero(heroName, level, nextLevel, exp);
+            swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
         }
     }
 
-    public void afterEncounter(String heroName, int level, int nextLevel, int exp) {
+    public void afterEncounter(Player player) {
         if (MODE) {
-
+            consoleView.display("You won the fight!");
+            consoleView.display("Gained " + player.getExpGained() + " experience");
         } else {
-            swingy.setHero(heroName, level, nextLevel, exp);
+            swingy.displayMain("You won the fight!");
+            swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
+        }
+    }
+
+    public void encounter(String enemy) {
+        if (MODE) {
+            consoleView.display(StaticVariables.MAIN_ECNOUNTER + enemy);
+            consoleView.display(StaticVariables.ENCOUNTER_OPTIONS);
+        } else {
+            swingy.refresh();
+            swingy.displayMain(StaticVariables.MAIN_ECNOUNTER + enemy);
+            swingy.displayOptions(StaticVariables.ENCOUNTER_OPTIONS);
+        }
+    }
+
+    public void displayWarning(String text) {
+        if (MODE) {
+            consoleView.display(text);
+        } else {
+            swingy.warning(text);
         }
     }
 
     public void levelUp() {
-        swingy.levelUp();
+        if (MODE) {
+            consoleView.display("LEVEL UP!");
+        } else {
+            swingy.levelUp();
+        }
     }
 
     public void displayMove(String text) {

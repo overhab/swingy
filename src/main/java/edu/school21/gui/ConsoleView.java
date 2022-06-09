@@ -32,8 +32,8 @@ public class ConsoleView {
         System.out.println(text);
     }
 
-    public void choseMove() {
-        System.out.println(StaticVariables.BORDER + "\n" + StaticVariables.CHOSE_MOVE);
+    public void chooseMove() {
+        System.out.println(StaticVariables.BORDER + "\n" + StaticVariables.CHOOSE_MOVE);
     }
 
     public void wrongInput() {

@@ -1,6 +1,8 @@
 package edu.school21.gui;
 
 import edu.school21.app.StaticVariables;
+import edu.school21.models.Hero;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 
@@ -46,10 +48,6 @@ public class Swingy {
         setup();
     }
 
-    public JFrame getjFrame() {
-        return jFrame;
-    }
-
     public JPanel getjPanel() {
         return jPanel;
     }
@@ -71,10 +69,38 @@ public class Swingy {
 
     }
 
+    public void displayHeroes(List<Hero> heroes) {
+
+        Hero hero;
+
+        for (int i = 0; i < heroes.size(); i++) {
+            hero = heroes.get(i);
+            JLabel selectHero = new JLabel(hero.getName());
+            selectHero.setBounds(100, 100 + (i * 20), 60, 20);
+            selectHero.setForeground(new Color(0x04AB65));
+            selectHero.setFont(new Font("Calibri", Font.BOLD, 18));
+            jPanel.add(selectHero);
+
+            JLabel levelLabel = new JLabel("LvL: " + hero.getLevel());
+            levelLabel.setBounds(250, 100 + (i * 20), 20, 20);
+            levelLabel.setForeground(new Color(0x04AB65));
+            levelLabel.setFont(new Font("Calibri", Font.BOLD, 18));
+            jPanel.add(levelLabel);
+
+            layout.putConstraint(SpringLayout.NORTH, selectHero, 120 + (i * 20), SpringLayout.NORTH, jPanel);
+            layout.putConstraint(SpringLayout.WEST, selectHero, 100, SpringLayout.WEST, jPanel);
+
+            layout.putConstraint(SpringLayout.NORTH, levelLabel, 120 + (i * 20), SpringLayout.NORTH, jPanel);
+            layout.putConstraint(SpringLayout.WEST, levelLabel, 250, SpringLayout.WEST, jPanel);
+        }
+
+        jPanel.revalidate();
+    }
+
     public void displayMain(String text) {
         mainLabel.setText(text);
         mainLabel.setBounds(75, 50, 480, 25);
-        mainLabel.setForeground(new Color(0xE1B719));
+        mainLabel.setForeground(new Color(0xE1B81A));
         mainLabel.setFont(new Font("Calibri", Font.BOLD, 22));
     }
 
@@ -130,10 +156,22 @@ public class Swingy {
         jPanel.revalidate();
     }
 
-    public void setHero(String heroName, int level, int nextLevel, int exp) {
+    public void warning(String text) {
+        heroLabel.setText(text);
+        heroLabel.setBounds(80, 60, 200, 15);
+        heroLabel.setForeground(new Color(0xB41E30));
+        heroLabel.setFont(new Font("Calibri", Font.BOLD, 15));
+
+        layout.putConstraint(SpringLayout.NORTH, heroLabel, 10, SpringLayout.SOUTH, mainLabel);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, heroLabel, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
+
+        jPanel.revalidate();
+    }
+
+    public void setHero(String heroName, int level, int nextLevel, int exp, int hp) {
         levelUp.setText("");
 
-        heroLabel.setText(heroName + "     LvL: " + level);
+        heroLabel.setText(heroName + "    LvL: " + level + "    HP: " + hp);
         heroLabel.setBounds(80, 60, 200, 15);
         heroLabel.setForeground(new Color(0xFFC908));
         heroLabel.setFont(new Font("Calibri", Font.BOLD, 14));

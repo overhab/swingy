@@ -1,5 +1,11 @@
 package edu.school21.models;
 
+
+import jakarta.persistence.*;
+
+@Entity
+@DiscriminatorValue("3")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Archer extends Hero {
     public Archer(String name) {
         this.name = name;
@@ -19,5 +25,9 @@ public class Archer extends Hero {
         this.hitPoints = hp;
         this.attack = attack;
         this.defence = defence;
+    }
+
+    public Archer() {
+
     }
 }

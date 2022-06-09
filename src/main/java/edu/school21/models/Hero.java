@@ -1,26 +1,41 @@
 package edu.school21.models;
 
 import edu.school21.app.StaticVariables;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jdk.jfr.Frequency;
 
-import java.util.ArrayList;
-import java.util.List;
+@Entity
+@Table(name = "hero")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="hero_type",
+        discriminatorType = DiscriminatorType.INTEGER)
+public class Hero {
 
-public abstract class Hero {
-    protected List<String> artifacts = new ArrayList<>(3);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected long id;
+
+    @Column(name = "heroName")
     @Size(min = 3, max = 16, message = "Hero name must be 3 to 16 characters long!")
     protected String name;
 
+    @Column(name = "heroClass")
     @NotNull(message = StaticVariables.HERO_TYPE)
+    @Enumerated(value = EnumType.STRING)
     protected HeroClass heroClass;
-
+    @Column(name = "level")
     protected int level;
+    @Column(name = "exp")
     protected int experience;
+    @Column(name = "attack")
     protected int attack;
+    @Column(name = "defence")
     protected int defence;
+    @Column(name = "hitpoints")
     protected int hitPoints;
+
+//    protected List<Artifact> artifacts = new ArrayList<>();
 
     public void setName(String name) {
         this.name = name;
@@ -82,11 +97,29 @@ public abstract class Hero {
         this.experience += exp;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public int levelUp() {
         setLevel(getLevel() + 1);
         setHitPoints(getHitPoints() + 15);
         setAttack(getAttack() + 3);
         setDefence(getDefence() + 2);
         return getLevel();
+    }
+
+    @Override
+    public String toString() {
+        return "Hero{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", heroClass=" + heroClass +
+                ", level=" + level +
+                ", experience=" + experience +
+                ", attack=" + attack +
+                ", defence=" + defence +
+                ", hitPoints=" + hitPoints +
+                '}';
     }
 }

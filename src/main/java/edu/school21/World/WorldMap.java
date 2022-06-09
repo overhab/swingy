@@ -2,6 +2,8 @@ package edu.school21.World;
 
 import java.util.Arrays;
 import java.util.Random;
+
+import edu.school21.app.StaticVariables;
 import javafx.util.Pair;
 
 public class WorldMap {
@@ -38,6 +40,7 @@ public class WorldMap {
     }
 
     public void printMap() {
+        System.out.println(StaticVariables.BORDER);
         for (int i = 0; i < size; i++) {
             System.out.println(Arrays.toString(map[i]));
         }

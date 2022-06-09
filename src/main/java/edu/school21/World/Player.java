@@ -10,6 +10,8 @@ public class Player {
     private final Random random = new Random();
     private int levelUp;
     private boolean nextLevel;
+    private int expGained;
+    private int hitPoints;
 
     public Player(Hero hero) {
         this.hero = hero;
@@ -17,8 +19,13 @@ public class Player {
         nextLevel = false;
     }
 
+    public int getExpGained() {
+        return expGained;
+    }
+
     private void gainExp(int exp) {
         System.out.println("You gained " + exp + " experience");
+        expGained = exp;
         hero.gainExp(exp);
         if (hero.getExperience() >= levelUp) {
             nextLevel = true;
@@ -26,6 +33,14 @@ public class Player {
             hero.levelUp();
             levelUp = (int) ((hero.getLevel() * 1000) + (Math.pow(hero.getLevel() - 1, 2.0) * 450));
         }
+    }
+
+    public Hero getHero() {
+        return hero;
+    }
+
+    public int getHitPoints() {
+        return hero.getHitPoints();
     }
 
     public int getLevelUp() {

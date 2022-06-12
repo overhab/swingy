@@ -1,9 +1,13 @@
 package edu.school21.models;
 
 import edu.school21.app.StaticVariables;
+import edu.school21.services.InventoryService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Entity
 @Table(name = "hero")
@@ -34,8 +38,9 @@ public class Hero {
     protected int defence;
     @Column(name = "hitpoints")
     protected int hitPoints;
+    @Transient
+    protected final HashMap<String, Artifact> artifacts = new HashMap<>(3);
 
-//    protected List<Artifact> artifacts = new ArrayList<>();
 
     public void setName(String name) {
         this.name = name;
@@ -101,6 +106,10 @@ public class Hero {
         return id;
     }
 
+    public HashMap<String, Artifact> getArtifacts() {
+        return artifacts;
+    }
+
     public int levelUp() {
         setLevel(getLevel() + 1);
         setHitPoints(getHitPoints() + 15);
@@ -121,5 +130,44 @@ public class Hero {
                 ", defence=" + defence +
                 ", hitPoints=" + hitPoints +
                 '}';
+    }
+
+    public long equipGear(Artifact artifact) {
+
+        if (artifact == null) {
+            return 0;
+        }
+
+        long ret = 0;
+
+        Artifact tmp = artifacts.get(artifact.getType());
+
+        if (tmp != null) {
+            ret = tmp.getId();
+            removeGear(tmp.getType());
+        }
+
+        artifacts.put(artifact.getType(), artifact);
+        if (artifact.getType().equals("Armor")) {
+            setDefence(getDefence() + artifact.getEffect());
+        } else if (artifact.getType().equals("Helmet")) {
+            setHitPoints(getHitPoints() + artifact.getEffect());
+        } else if (artifact.getType().equals("Weapon")) {
+            setAttack(getAttack() + artifact.getEffect());
+        }
+
+        return ret;
+    }
+
+    public void removeGear(String gear) {
+        Artifact artifact = artifacts.get(gear);
+        artifacts.put(gear, null);
+        if (gear.equals("Armor")) {
+            setDefence(getDefence() - artifact.getEffect());
+        } else if (gear.equals("Helmet")) {
+            setHitPoints(getHitPoints() - artifact.getEffect());
+        } else if (gear.equals("Weapon")) {
+            setAttack(getAttack() - artifact.getEffect());
+        }
     }
 }

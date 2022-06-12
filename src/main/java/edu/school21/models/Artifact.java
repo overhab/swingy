@@ -17,6 +17,16 @@ public class Artifact {
     private String type;
     @Column(name = "effect")
     private int effect;
+    @Column(name = "tier")
+    private int tier;
+
+    public Artifact(long id, String name, String type, int effect, int tier) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.effect = effect;
+        this.tier = tier;
+    }
 
     public Artifact(String name, String type, int effect) {
         this.name = name;
@@ -41,6 +51,14 @@ public class Artifact {
 
     public long getId() {
         return id;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
     }
 
     @Override

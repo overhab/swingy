@@ -9,7 +9,7 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.Optional;
 
-public class HeroDAO {
+public class HeroDao {
 
     public Optional<Hero> findById(long id) {
         return Optional.of(HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Hero.class, id));
@@ -17,7 +17,6 @@ public class HeroDAO {
 
     public Hero findByName(String name) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
         Query<Hero> query= session.createQuery("from Hero where name=:name", Hero.class);
         query.setParameter("name", name);
         return (Hero) query.uniqueResult();

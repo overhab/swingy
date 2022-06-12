@@ -1,13 +1,13 @@
 package edu.school21.services;
 
-import edu.school21.dao.HeroDAO;
+import edu.school21.dao.HeroDao;
 import edu.school21.models.Hero;
 
 import java.util.List;
 import java.util.Optional;
 
 public class HeroService {
-    private final HeroDAO heroDAO = new HeroDAO();
+    private final HeroDao heroDAO = new HeroDao();
 
     public HeroService() {
     }

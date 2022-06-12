@@ -13,11 +13,12 @@ create table if not exists artifact (
     id bigserial not null primary key,
     name varchar(60) not null,
     type varchar(20) not null,
+    tier int not null,
     effect int not null
 );
 
-create table if not exists playersItem (
+create table if not exists inventory (
     id bigserial not null primary key,
-    player bigint references hero(id),
-    artifact bigint references artifact(id)
+    hero_id bigint references hero(id),
+    item_id bigint references artifact(id)
 );

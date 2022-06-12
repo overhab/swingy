@@ -68,13 +68,14 @@ public class ViewManager {
         }
     }
 
-    public void chooseMove() {
+    public void chooseMove(Player player) {
         if (MODE) {
             consoleView.chooseMove();
         } else {
             swingy.refresh();
             swingy.displayMain("CHOOSE YOUR MOVE");
             swingy.displayOptions("North\nSouth\nWest\nEast");
+            swingy.showInventory(player.getArtifacts());
         }
     }
 
@@ -92,20 +93,28 @@ public class ViewManager {
             consoleView.gamePlay(player.getHeroName());
         } else {
             swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
+            swingy.showInventory(player.getArtifacts());
         }
     }
 
-    public void afterEncounter(Player player) {
+    public void afterEncounter(Player player, int drop, String aName) {
         if (MODE) {
             consoleView.display("You won the fight!");
             consoleView.display("Gained " + player.getExpGained() + " experience");
         } else {
+            swingy.refresh();
             swingy.displayMain("You won the fight!");
+            swingy.showInventory(player.getArtifacts());
+            if (drop == 2) {
+                swingy.message("Monster has loot: " + aName);
+                swingy.displayOptions("Take it" +
+                        "\nLeave it");
+            }
             swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
         }
     }
 
-    public void encounter(String enemy) {
+    public void encounter(String enemy, Player player) {
         if (MODE) {
             consoleView.display(StaticVariables.MAIN_ECNOUNTER + enemy);
             consoleView.display(StaticVariables.ENCOUNTER_OPTIONS);
@@ -113,6 +122,7 @@ public class ViewManager {
             swingy.refresh();
             swingy.displayMain(StaticVariables.MAIN_ECNOUNTER + enemy);
             swingy.displayOptions(StaticVariables.ENCOUNTER_OPTIONS);
+            swingy.showInventory(player.getArtifacts());
         }
     }
 

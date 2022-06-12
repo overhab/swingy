@@ -8,6 +8,7 @@ import edu.school21.gui.ConsoleView;
 import edu.school21.gui.Swingy;
 import edu.school21.gui.ViewManager;
 import edu.school21.models.*;
+import edu.school21.services.ArtifactService;
 import edu.school21.services.HeroService;
 
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.Random;
 public class GameController {
 
     private final InputValidation inputValidation;
+    private final ArtifactService artifactService;
     private final HeroService heroService;
     private final Random random = new Random();
     private ViewManager viewManager;
     private UserInput userInput;
     private String input = "";
-    private ConsoleView consoleView;
     private Swingy swingy;
     private Player player;
     private WorldMap worldMap;
@@ -30,10 +31,11 @@ public class GameController {
     public GameController() {
         inputValidation = new InputValidation();
         heroService = new HeroService();
+        artifactService = new ArtifactService();
     }
 
     public void start(boolean mode) {
-        consoleView = new ConsoleView();
+        ConsoleView consoleView = new ConsoleView();
         swingy = new Swingy();
         userInput = new UserInput();
 
@@ -90,7 +92,8 @@ public class GameController {
                     }
                 }
 
-                player = new Player(hero);
+                player = new Player(hero, artifactService);
+                player.getAllItems();
                 viewManager.gamePlay(player);
                 startTheGame();
 
@@ -101,14 +104,6 @@ public class GameController {
             viewManager.wrongInput();
         }
 
-    }
-
-    private void startGUI() {
-        String input;
-
-        swingy.displayMain(StaticVariables.WELCOME_MESSAGE);
-        swingy.displayOptions(StaticVariables.MAIN_MENU);
-        input = userInput.getInput();
     }
 
     public void newGame() {
@@ -146,7 +141,7 @@ public class GameController {
         }
 
         if (inputValidation.HeroValidation(hero)) {
-            player = new Player(hero);
+            player = new Player(hero, artifactService);
             System.out.println("Player created: " + player.getLevelUp());
         } else {
             newGame();
@@ -166,34 +161,50 @@ public class GameController {
 
         try {
             while (true) {
-                viewManager.chooseMove();
+                viewManager.chooseMove(player);
                 input = userInput.getInput().toUpperCase(Locale.ROOT);
                 if (input.equals("NORTH") || input.equals("SOUTH") || input.equals("EAST") || input.equals("WEST")) {
                     viewManager.displayMove(input.toLowerCase(Locale.ROOT));
                     encounter = worldMap.movePlayer(input);
 
                     if (encounter > 0) {
-                        viewManager.encounter(encounter == 1 ? "GOBLIN" : "LARGE OGRE");
-                        input = userInput.getInput().toUpperCase(Locale.ROOT);
-                        if (input.equals("FIGHT") || (input.equals("RUN") && random.nextInt(1000) > (200))) {
+                        viewManager.encounter(encounter == 1 ? "GOBLIN" : "LARGE OGRE", player);
+                        while (true) {
+                            input = userInput.getInput().toUpperCase(Locale.ROOT);
+                            if (input.equals("FIGHT") || (input.equals("RUN") && random.nextInt(1000) < 150)) {
 
-                            if (input.equals("RUN")) {
-                                viewManager.display("You can't run!");
+                                if (input.equals("RUN")) {
+                                    viewManager.display("You can't run!");
+                                }
+
+                                int drop;
+
+                                if ((drop = player.encounter(encounter)) == 0) {
+                                    viewManager.displayEnd("YOU DIED! ! !");
+                                    return;
+                                }
+
+                                if (drop == 2) {
+                                    Artifact artifact = artifactService.findByTier(Math.min((player.getHeroLevel() + 5) / 5, 5));
+                                    viewManager.afterEncounter(player, drop, artifact.getName());
+                                    heroService.update(player.getHero());
+                                    receiveLoot(artifact);
+                                } else {
+                                    heroService.update(player.getHero());
+                                    viewManager.afterEncounter(player, drop, null);
+                                }
+
+                                if (player.isNextLevel()) {
+                                    player.setNextLevel(false);
+                                    viewManager.levelUp();
+                                }
+
+                                break ;
+                            } else if (input.equals("RUN")) {
+                                break ;
+                            } else {
+                                viewManager.wrongInput();
                             }
-
-                            if (!player.encounter(encounter)) {
-                                viewManager.displayEnd("YOU DIED! ! !");
-                                return ;
-                            }
-
-                            heroService.update(player.getHero());
-                            viewManager.afterEncounter(player);
-
-                            if (player.isNextLevel()) {
-                                player.setNextLevel(false);
-                                viewManager.levelUp();
-                            }
-
                         }
                     }
 
@@ -208,6 +219,20 @@ public class GameController {
         } catch (IndexOutOfBoundsException exception) {
             heroService.update(player.getHero());
             viewManager.displayEnd("YOU WIN! ! !");
+        }
+    }
+
+    private void receiveLoot(Artifact artifact) {
+        while (true) {
+            input = userInput.getInput().toUpperCase(Locale.ROOT);
+            if (input.equals("TAKE IT")) {
+                player.equip(artifact);
+                break ;
+            } else if (input.equals("LEAVE IT")) {
+                return;
+            } else {
+                viewManager.wrongInput();
+            }
         }
     }
 

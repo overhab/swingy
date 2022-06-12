@@ -1,7 +1,10 @@
 package edu.school21.gui;
 
 import edu.school21.app.StaticVariables;
+import edu.school21.models.Artifact;
 import edu.school21.models.Hero;
+
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +21,8 @@ public class Swingy {
     private final JLabel wrongInput = new JLabel("");
     private final JLabel expBar = new JLabel("");
     private final JLabel levelUp = new JLabel("");
+    private final JLabel items = new JLabel("");
+    private final JLabel message = new JLabel("");
 
     public Swingy() {
     }
@@ -30,7 +35,9 @@ public class Swingy {
         jPanel.add(heroLabel);
         jPanel.add(expBar);
         jPanel.add(levelUp);
+        jPanel.add(items);
         jPanel.setLayout(layout);
+        jPanel.add(message);
         jPanel.setBackground(new Color(0.1f, 0.0f, 0.2f, 1.0f));
         jFrame.add(jPanel);
 
@@ -57,9 +64,9 @@ public class Swingy {
 
         for (int i = 0; i < labels.length; i++) {
             JLabel jLabel = new JLabel(labels[i]);
-            jLabel.setBounds(100, 150 + (i * 30), 200, 20);
+            jLabel.setBounds(100, 150 + (i * 30), 200, 22);
             jLabel.setForeground(new Color(0xFFFFFF));
-            jLabel.setFont(new Font("Calibri", Font.BOLD, 18));
+            jLabel.setFont(new Font("Calibri", Font.BOLD, 22));
             jPanel.add(jLabel);
             layout.putConstraint(SpringLayout.NORTH, jLabel, 160 + (i * 30), SpringLayout.NORTH, jPanel);
             layout.putConstraint(SpringLayout.WEST, jLabel, 100, SpringLayout.WEST, jPanel);
@@ -78,13 +85,13 @@ public class Swingy {
             JLabel selectHero = new JLabel(hero.getName());
             selectHero.setBounds(100, 100 + (i * 20), 60, 20);
             selectHero.setForeground(new Color(0x04AB65));
-            selectHero.setFont(new Font("Calibri", Font.BOLD, 18));
+            selectHero.setFont(new Font("Calibri", Font.BOLD, 20));
             jPanel.add(selectHero);
 
             JLabel levelLabel = new JLabel("LvL: " + hero.getLevel());
             levelLabel.setBounds(250, 100 + (i * 20), 20, 20);
             levelLabel.setForeground(new Color(0x04AB65));
-            levelLabel.setFont(new Font("Calibri", Font.BOLD, 18));
+            levelLabel.setFont(new Font("Calibri", Font.BOLD, 20));
             jPanel.add(levelLabel);
 
             layout.putConstraint(SpringLayout.NORTH, selectHero, 120 + (i * 20), SpringLayout.NORTH, jPanel);
@@ -99,9 +106,9 @@ public class Swingy {
 
     public void displayMain(String text) {
         mainLabel.setText(text);
-        mainLabel.setBounds(75, 50, 480, 25);
+        mainLabel.setBounds(75, 50, 480, 27);
         mainLabel.setForeground(new Color(0xE1B81A));
-        mainLabel.setFont(new Font("Calibri", Font.BOLD, 22));
+        mainLabel.setFont(new Font("Calibri", Font.BOLD, 27));
     }
 
     public void setVisible(boolean b) {
@@ -110,6 +117,8 @@ public class Swingy {
 
     public void refresh() {
         jPanel.removeAll();
+        jPanel.revalidate();
+        jPanel.repaint();
         jPanel.add(mainLabel);
         layout.putConstraint(SpringLayout.NORTH, mainLabel, 50, SpringLayout.NORTH, jPanel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, mainLabel, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
@@ -131,8 +140,18 @@ public class Swingy {
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, expBar, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
 
         jPanel.add(levelUp);
+        levelUp.setText("");
         layout.putConstraint(SpringLayout.SOUTH, levelUp, 5, SpringLayout.NORTH, expBar);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, levelUp, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
+
+        jPanel.add(items);
+        layout.putConstraint(SpringLayout.NORTH, items, 160, SpringLayout.NORTH, jPanel);
+        layout.putConstraint(SpringLayout.WEST, items, 300, SpringLayout.WEST, jPanel);
+
+        jPanel.add(message);
+        message.setText("");
+        layout.putConstraint(SpringLayout.NORTH, message, 50, SpringLayout.SOUTH, mainLabel);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, message, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
 
         jPanel.revalidate();
     }
@@ -156,6 +175,19 @@ public class Swingy {
         jPanel.revalidate();
     }
 
+    public void message(String text) {
+        message.setText(text);
+
+        message.setBounds(80, 60, 200, 16);
+        message.setForeground(new Color(0xEAC01A));
+        message.setFont(new Font("Calibri", Font.BOLD, 16));
+
+        layout.putConstraint(SpringLayout.NORTH, message, 50, SpringLayout.SOUTH, mainLabel);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, message, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
+
+        jPanel.revalidate();
+    }
+
     public void warning(String text) {
         heroLabel.setText(text);
         heroLabel.setBounds(80, 60, 200, 15);
@@ -164,6 +196,30 @@ public class Swingy {
 
         layout.putConstraint(SpringLayout.NORTH, heroLabel, 10, SpringLayout.SOUTH, mainLabel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, heroLabel, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
+
+        jPanel.revalidate();
+    }
+
+    public void showInventory(HashMap<String, Artifact> artifacts) {
+        items.setText("Inventory:");
+        items.setBounds(400, 160, 200, 22);
+        items.setForeground(new Color(0xFFC908));
+        items.setFont(new Font("Calibri", Font.BOLD, 22));
+
+        int i = 35;
+        for (String key : artifacts.keySet()) {
+            JLabel item = new JLabel(key + ": " + artifacts.get(key).getName());
+            item.setForeground(new Color(0xFFC908));
+            item.setBounds(380, 160 + i, 200, 14);
+            item.setFont(new Font("Calibri", Font.BOLD, 14));
+            jPanel.add(item);
+            layout.putConstraint(SpringLayout.NORTH, item, 160 + i, SpringLayout.NORTH, jPanel);
+            layout.putConstraint(SpringLayout.WEST, item, 380, SpringLayout.WEST, jPanel);
+            i += 25;
+        }
+
+        layout.putConstraint(SpringLayout.NORTH, items, 160, SpringLayout.NORTH, jPanel);
+        layout.putConstraint(SpringLayout.WEST, items, 400, SpringLayout.WEST, jPanel);
 
         jPanel.revalidate();
     }

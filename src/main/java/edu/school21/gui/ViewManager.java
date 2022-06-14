@@ -50,6 +50,12 @@ public class ViewManager {
         }
     }
 
+    public void displayLevel(String text, Player player) {
+        swingy.refresh();
+        swingy.displayOptions(text);
+        swingy.showInventory(player.getArtifacts());
+    }
+
     public void wrongInput() {
         if (MODE) {
             consoleView.wrongInput();
@@ -60,7 +66,8 @@ public class ViewManager {
 
     public void chooseHero(List<Hero> heroes) {
         if (MODE) {
-
+            consoleView.display("CHOOSE YOUR HERO");
+            consoleView.displayHeroes(heroes);
         } else {
             swingy.refresh();
             swingy.displayMain("CHOOSE YOUR HERO");
@@ -75,6 +82,13 @@ public class ViewManager {
             swingy.refresh();
             swingy.displayMain("CHOOSE YOUR MOVE");
             swingy.displayOptions("North\nSouth\nWest\nEast");
+            swingy.setHero(player.getHeroName(),
+                    player.getHeroLevel(),
+                    player.getLevelUp(),
+                    player.getHeroExp(),
+                    player.getHitPoints(),
+                    player.getAttack(),
+                    player.getDefence());
             swingy.showInventory(player.getArtifacts());
         }
     }
@@ -92,7 +106,13 @@ public class ViewManager {
         if (MODE) {
             consoleView.gamePlay(player.getHeroName());
         } else {
-            swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
+            swingy.setHero(player.getHeroName(),
+                    player.getHeroLevel(),
+                    player.getLevelUp(),
+                    player.getHeroExp(),
+                    player.getHitPoints(),
+                    player.getAttack(),
+                    player.getDefence());
             swingy.showInventory(player.getArtifacts());
         }
     }
@@ -110,7 +130,13 @@ public class ViewManager {
                 swingy.displayOptions("Take it" +
                         "\nLeave it");
             }
-            swingy.setHero(player.getHeroName(), player.getHeroLevel(), player.getLevelUp(), player.getHeroExp(), player.getHitPoints());
+            swingy.setHero(player.getHeroName(),
+                    player.getHeroLevel(),
+                    player.getLevelUp(),
+                    player.getHeroExp(),
+                    player.getHitPoints(),
+                    player.getAttack(),
+                    player.getDefence());
         }
     }
 

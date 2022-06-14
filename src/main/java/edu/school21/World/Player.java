@@ -76,6 +76,14 @@ public class Player {
         this.nextLevel = nextLevel;
     }
 
+    public int getAttack() {
+        return hero.getAttack();
+    }
+
+    public int getDefence() {
+        return hero.getDefence();
+    }
+
     public int encounter(int type) {
         int ret = 1;
 

@@ -1,6 +1,9 @@
 package edu.school21.gui;
 
 import edu.school21.app.StaticVariables;
+import edu.school21.models.Hero;
+
+import java.util.List;
 
 public class ConsoleView {
     private static boolean FLAG = true;
@@ -38,5 +41,16 @@ public class ConsoleView {
 
     public void wrongInput() {
         System.err.println(StaticVariables.WRONG_INPUT);
+    }
+
+    public void displayHeroes(List<Hero> heroes) {
+        for (int i = 0; i < heroes.size(); i++) {
+            Hero hero = heroes.get(i);
+            System.out.println((i + 1) + hero.getName()
+                    + " LvL: " + hero.getLevel()
+                    + " Attack: " + hero.getAttack()
+                    + " Defence: " + hero.getDefence()
+                    + " HitPoints: " + hero.getHitPoints());
+        }
     }
 }

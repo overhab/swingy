@@ -4,15 +4,18 @@ import edu.school21.app.StaticVariables;
 import edu.school21.models.Artifact;
 import edu.school21.models.Hero;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 
 public class Swingy {
 
     private final JFrame jFrame = new JFrame("Swingy");
-    private final JButton button = new JButton("BUTTON");
     private final JPanel jPanel = new JPanel();
     private JLabel mainLabel = new JLabel("");
     private final JLabel moveLabel = new JLabel("");
@@ -23,6 +26,7 @@ public class Swingy {
     private final JLabel levelUp = new JLabel("");
     private final JLabel items = new JLabel("");
     private final JLabel message = new JLabel("");
+    private static final Color BACKGROUND_COLOR = new Color(0x070917);
 
     public Swingy() {
     }
@@ -38,7 +42,7 @@ public class Swingy {
         jPanel.add(items);
         jPanel.setLayout(layout);
         jPanel.add(message);
-        jPanel.setBackground(new Color(0.1f, 0.0f, 0.2f, 1.0f));
+        jPanel.setBackground(BACKGROUND_COLOR);
         jFrame.add(jPanel);
 
         layout.putConstraint(SpringLayout.NORTH, mainLabel, 50, SpringLayout.NORTH, jPanel);
@@ -47,7 +51,9 @@ public class Swingy {
         layout.putConstraint(SpringLayout.NORTH, moveLabel, 320, SpringLayout.NORTH, jPanel);
         layout.putConstraint(SpringLayout.WEST, moveLabel, 80, SpringLayout.WEST, jPanel);
 
+
         jFrame.setVisible(true);
+        jFrame.setResizable(false);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
@@ -77,29 +83,52 @@ public class Swingy {
     }
 
     public void displayHeroes(List<Hero> heroes) {
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.setColumnCount(6);
 
-        Hero hero;
+        String[] colNames = {"Name", "Class", "LvL", "Attack", "Defence", "HP"};
+        tableModel.setColumnIdentifiers(colNames);
 
-        for (int i = 0; i < heroes.size(); i++) {
-            hero = heroes.get(i);
-            JLabel selectHero = new JLabel(hero.getName());
-            selectHero.setBounds(100, 100 + (i * 20), 60, 20);
-            selectHero.setForeground(new Color(0x04AB65));
-            selectHero.setFont(new Font("Calibri", Font.BOLD, 20));
-            jPanel.add(selectHero);
-
-            JLabel levelLabel = new JLabel("LvL: " + hero.getLevel());
-            levelLabel.setBounds(250, 100 + (i * 20), 20, 20);
-            levelLabel.setForeground(new Color(0x04AB65));
-            levelLabel.setFont(new Font("Calibri", Font.BOLD, 20));
-            jPanel.add(levelLabel);
-
-            layout.putConstraint(SpringLayout.NORTH, selectHero, 120 + (i * 20), SpringLayout.NORTH, jPanel);
-            layout.putConstraint(SpringLayout.WEST, selectHero, 100, SpringLayout.WEST, jPanel);
-
-            layout.putConstraint(SpringLayout.NORTH, levelLabel, 120 + (i * 20), SpringLayout.NORTH, jPanel);
-            layout.putConstraint(SpringLayout.WEST, levelLabel, 250, SpringLayout.WEST, jPanel);
+        for (Hero hero : heroes) {
+            tableModel.addRow(hero.toArray());
         }
+
+        JTable table = new JTable(tableModel);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+        table.setForeground(new Color(0x04AB65));
+        table.setBackground(BACKGROUND_COLOR);
+        table.setFont(new Font("Calibri", Font.BOLD, 18));
+        table.setRowHeight(20);
+        table.getColumn("LvL").setMaxWidth(45);
+        table.getColumn("Attack").setMaxWidth(65);
+        table.getColumn("Defence").setMaxWidth(75);
+        table.getColumn("HP").setMaxWidth(40);
+        table.getColumn("Name").setCellRenderer(centerRenderer);
+        table.getColumn("Class").setCellRenderer(centerRenderer);
+        table.getColumn("LvL").setCellRenderer(centerRenderer);
+        table.getColumn("Attack").setCellRenderer(centerRenderer);
+        table.getColumn("Defence").setCellRenderer(centerRenderer);
+        table.getColumn("HP").setCellRenderer(centerRenderer);
+        table.getTableHeader().setBackground(new Color(0x0E112D));
+        table.getTableHeader().setForeground(new Color(0x04AB65));
+        table.getTableHeader().setFont(new Font("Calibri", Font.BOLD, 20));
+
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setBounds(40, 130, 100, 100);
+        scroll.setPreferredSize(new Dimension(500, 210));
+        scroll.setBackground(BACKGROUND_COLOR);
+        scroll.getViewport().setBackground(BACKGROUND_COLOR);
+        scroll.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+        scroll.getViewport().setBorder(null);
+        scroll.setViewportBorder(null);
+        scroll.setBorder(null);
+
+        jPanel.add(scroll);
+
+        layout.putConstraint(SpringLayout.NORTH, scroll, 130, SpringLayout.NORTH, jPanel);
+        layout.putConstraint(SpringLayout.WEST, scroll, 40, SpringLayout.WEST, jPanel);
 
         jPanel.revalidate();
     }
@@ -140,7 +169,6 @@ public class Swingy {
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, expBar, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
 
         jPanel.add(levelUp);
-        levelUp.setText("");
         layout.putConstraint(SpringLayout.SOUTH, levelUp, 5, SpringLayout.NORTH, expBar);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, levelUp, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
 
@@ -224,10 +252,10 @@ public class Swingy {
         jPanel.revalidate();
     }
 
-    public void setHero(String heroName, int level, int nextLevel, int exp, int hp) {
+    public void setHero(String heroName, int level, int nextLevel, int exp, int hp, int attack, int defence) {
         levelUp.setText("");
 
-        heroLabel.setText(heroName + "    LvL: " + level + "    HP: " + hp);
+        heroLabel.setText(heroName + "  LvL: " + level + "  HP: " + hp + "  Attack: " + attack + "  Defence: " + defence);
         heroLabel.setBounds(80, 60, 200, 15);
         heroLabel.setForeground(new Color(0xFFC908));
         heroLabel.setFont(new Font("Calibri", Font.BOLD, 14));

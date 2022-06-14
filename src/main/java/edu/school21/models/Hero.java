@@ -1,12 +1,11 @@
 package edu.school21.models;
 
 import edu.school21.app.StaticVariables;
-import edu.school21.services.InventoryService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.Strings;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Entity
@@ -14,7 +13,7 @@ import java.util.HashMap;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="hero_type",
         discriminatorType = DiscriminatorType.INTEGER)
-public class Hero {
+public abstract class Hero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -169,5 +168,18 @@ public class Hero {
         } else if (gear.equals("Weapon")) {
             setAttack(getAttack() - artifact.getEffect());
         }
+    }
+
+    public String[] toArray() {
+        String[] data = new String[6];
+
+        data[0] = getName();
+        data[1] = getHeroClass().toString();
+        data[2] = String.valueOf(getLevel());
+        data[3] = String.valueOf(getAttack());
+        data[4] = String.valueOf(getDefence());
+        data[5] = String.valueOf(getHitPoints());
+
+        return data;
     }
 }

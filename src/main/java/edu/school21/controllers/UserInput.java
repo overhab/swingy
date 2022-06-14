@@ -41,13 +41,13 @@ public class UserInput {
         } else {
             enter = false;
             textField = new JTextField(15);
-            textField.setBackground(new Color(0x1D265D));
-            textField.setBounds(80, 350, 200, 40);
+            textField.setBackground(new Color(0x080F2D));
+            textField.setBounds(80, 360, 200, 40);
             textField.setForeground(new Color(0xFFFFFF));
             textField.setFont(new Font("Calibri", Font.BOLD, 17));
             textField.addActionListener(ACTION);
             jPanel.add(textField);
-            layout.putConstraint(SpringLayout.NORTH, textField, 350, SpringLayout.NORTH, jPanel);
+            layout.putConstraint(SpringLayout.NORTH, textField, 360, SpringLayout.NORTH, jPanel);
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textField, 0, SpringLayout.HORIZONTAL_CENTER, jPanel);
             jPanel.revalidate();
             while (!enter) {

@@ -12,7 +12,10 @@ public class StaticVariables {
     public static final String WRONG_INPUT = "Wrong input";
 
     public static final String NEW_HERO = "CREATE NEW HERO";
-    public static final String HERO_TYPE = "Please choose a class (mage, warrior, archer)";
+    public static final String HERO_TYPE = "Please choose a class " +
+            "\nMage    [Attack: 15 Defence: 5 HitPoints: 80]" +
+            "\nWarrior [Attack: 10 Defence: 10 HitPoints: 120]" +
+            "\nArcher  [Attack: 12 Defence: 8 HitPoints: 100]";
 
     public static final String CHOOSE_MOVE = "You can move in this directions: " +
             "\nNorth" +

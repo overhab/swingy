@@ -57,14 +57,14 @@ public class GameController {
             input = userInput.getInput();
             System.out.println(input);
 
-            if (input.equals("Create new hero")) {
+            if (input.toUpperCase(Locale.ROOT).equals("CREATE NEW HERO")) {
                 viewManager.newHero();
                 newGame();
                 heroService.save(player.getHero());
                 viewManager.gamePlay(player);
                 startTheGame();
                 return;
-            } else if (input.equals("Select hero")) {
+            } else if (input.toUpperCase(Locale.ROOT).equals("SELECT HERO")) {
 
                 List<Hero> heroes = heroService.findAll();
 
@@ -98,7 +98,7 @@ public class GameController {
                 startTheGame();
 
                 return;
-            } else if (input.equals("Quit")) {
+            } else if (input.toUpperCase(Locale.ROOT).equals("QUIT")) {
                 exit();
             }
             viewManager.wrongInput();
@@ -149,7 +149,20 @@ public class GameController {
     }
 
     private void startTheGame() {
-        startLevel();
+
+        viewManager.displayLevel("Start new level" +
+                "\nQuit", player);
+        while (true) {
+            input = userInput.getInput().toUpperCase(Locale.ROOT);
+            if (input.equals("START") || input.equals("START NEW LEVEL")) {
+                startLevel();
+                startTheGame();
+                break ;
+            } else if (input.equals("QUIT")) {
+                return ;
+            }
+            viewManager.wrongInput();
+        }
     }
 
     private void startLevel() {
@@ -187,8 +200,8 @@ public class GameController {
                                 if (drop == 2) {
                                     Artifact artifact = artifactService.findByTier(Math.min((player.getHeroLevel() + 5) / 5, 5));
                                     viewManager.afterEncounter(player, drop, artifact.getName());
-                                    heroService.update(player.getHero());
                                     receiveLoot(artifact);
+                                    heroService.update(player.getHero());
                                 } else {
                                     heroService.update(player.getHero());
                                     viewManager.afterEncounter(player, drop, null);
@@ -210,7 +223,6 @@ public class GameController {
 
                     worldMap.printMap();
                 } else if (input.equals("QUIT")) {
-                    System.out.println("QUIT.");
                     break ;
                 } else {
                     viewManager.wrongInput();
@@ -225,10 +237,10 @@ public class GameController {
     private void receiveLoot(Artifact artifact) {
         while (true) {
             input = userInput.getInput().toUpperCase(Locale.ROOT);
-            if (input.equals("TAKE IT")) {
+            if (input.equals("TAKE IT") || input.equals("TAKE")) {
                 player.equip(artifact);
                 break ;
-            } else if (input.equals("LEAVE IT")) {
+            } else if (input.equals("LEAVE IT") || input.equals("LEAVE")) {
                 return;
             } else {
                 viewManager.wrongInput();

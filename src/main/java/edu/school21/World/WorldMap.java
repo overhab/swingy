@@ -36,7 +36,7 @@ public class WorldMap {
                 }
             }
         }
-        enemyCount = size + enemyDensity;
+        enemyCount = size * enemyDensity;
     }
 
     public void printMap() {

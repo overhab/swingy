@@ -49,7 +49,7 @@ public class HeroDao {
     public List<Hero> findAll() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        Query<Hero> query = session.createQuery("from Hero", Hero.class);
+        Query<Hero> query = session.createQuery("from Hero order by id", Hero.class);
         List<Hero> list = query.list();
         tx.commit();
         return list;
